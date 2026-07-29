@@ -7,125 +7,167 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
 </head>
 <body>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
   <div class="app">
-    <header>
+    <header class="app-header">
       <div class="logo">
         <div class="logo-icon">✦</div>
-       Ats Quiz
+        <span>Ats Quiz</span>
       </div>
       <span class="badge">v1.0</span>
     </header>
 
-    <!-- HOME -->
-    <div id="home" class="screen active">
+    <!-- HOME SCREEN -->
+    <main id="home" class="screen active">
       <div class="hero">
-        <h1>Test your knowledge.<br><span>Master every subject.</span></h1>
-        <p>Choose a subject below and challenge yourself with carefully crafted questions.</p>
+        <div class="hero-tag">✨ Challenge Yourself</div>
+        <h1>Test your knowledge.<br><span class="gradient-text">Master every subject.</span></h1>
+        <p>Choose a category below and jump into interactive practice modules.</p>
       </div>
-      <div class="subjects">
-        <div class="subject-card eng" data-subject="english">
-          <div class="subject-icon">📖</div>
-          <h3>English</h3>
-          <p>Grammar & Vocabulary</p>
-        </div>
-        <div class="subject-card math" data-subject="math">
-          <div class="subject-icon">∑</div>
-          <h3>Mathematics</h3>
-          <p>Algebra & Numbers</p>
-        </div>
-        <div class="subject-card phy" data-subject="physics">
-          <div class="subject-icon">⚛️</div>
-          <h3>Physics</h3>
-          <p>Forces & Energy</p>
-        </div>
-        <div class="subject-card chem" data-subject="chemistry">
-          <div class="subject-icon">🧪</div>
-          <h3>Chemistry</h3>
-          <p>Elements & Reactions</p>
-        </div>
-        <div class="subject-card cs" data-subject="computer">
-          <div class="subject-icon">💻</div>
-          <h3>Computer</h3>
-          <p>CS Fundamentals</p>
-        </div>
-      </div>
-    </div>
 
-    <!-- QUIZ -->
-    <div id="quiz" class="screen">
-      <div class="quiz-top">
-        <div class="quiz-meta">
+      <div class="subjects-grid">
+        <button class="subject-card eng" data-subject="english">
+          <div class="card-glow"></div>
+          <div class="subject-icon">📖</div>
+          <div class="card-content">
+            <h3>English</h3>
+            <p>Grammar & Vocabulary</p>
+          </div>
+          <span class="arrow">→</span>
+        </button>
+
+        <button class="subject-card math" data-subject="math">
+          <div class="card-glow"></div>
+          <div class="subject-icon">∑</div>
+          <div class="card-content">
+            <h3>Mathematics</h3>
+            <p>Algebra & Numbers</p>
+          </div>
+          <span class="arrow">→</span>
+        </button>
+
+        <button class="subject-card phy" data-subject="physics">
+          <div class="card-glow"></div>
+          <div class="subject-icon">⚛️</div>
+          <div class="card-content">
+            <h3>Physics</h3>
+            <p>Forces & Energy</p>
+          </div>
+          <span class="arrow">→</span>
+        </button>
+
+        <button class="subject-card chem" data-subject="chemistry">
+          <div class="card-glow"></div>
+          <div class="subject-icon">🧪</div>
+          <div class="card-content">
+            <h3>Chemistry</h3>
+            <p>Elements & Reactions</p>
+          </div>
+          <span class="arrow">→</span>
+        </button>
+
+        <button class="subject-card cs" data-subject="computer">
+          <div class="card-glow"></div>
+          <div class="subject-icon">💻</div>
+          <div class="card-content">
+            <h3>Computer</h3>
+            <p>CS Fundamentals</p>
+          </div>
+          <span class="arrow">→</span>
+        </button>
+      </div>
+    </main>
+
+    <!-- QUIZ SCREEN -->
+    <main id="quiz" class="screen">
+      <div class="quiz-container">
+        <div class="quiz-top">
           <div class="subject-pill">
-            <span id="quiz-icon"></span>
-            <span id="quiz-subject"></span>
+            <span id="quiz-icon">📖</span>
+            <span id="quiz-subject">Subject</span>
           </div>
+          
+          <div class="timer" id="timer">
+            <span class="timer-icon">⏱</span>
+            <span id="timer-value">60</span>s
+          </div>
+        </div>
+
+        <div class="progress-container">
           <div class="progress-info">
-            Question <strong id="q-current">1</strong> of <strong id="q-total">10</strong>
+            <span>Progress</span>
+            <span><strong id="q-current">1</strong> / <strong id="q-total">10</strong></span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
           </div>
         </div>
-        <div class="timer" id="timer">
-          <span>⏱</span>
-          <span id="timer-value">60</span>s
+
+        <div class="question-card">
+          <span class="q-badge" id="q-label">Question 1</span>
+          <h2 class="question-text" id="question-text">Loading question...</h2>
+          <div class="options-grid" id="options"></div>
         </div>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
-      </div>
-      <div class="question-card">
-        <div class="q-number" id="q-label">Question 1</div>
-        <div class="question-text" id="question-text"></div>
-        <div class="options" id="options"></div>
+
         <div class="quiz-actions">
           <button class="btn btn-ghost" id="btn-quit">Quit</button>
-          <button class="btn btn-primary" id="btn-next" disabled>Next →</button>
+          <button class="btn btn-primary" id="btn-next" disabled>Next Question →</button>
         </div>
       </div>
-    </div>
+    </main>
 
-    <!-- RESULTS -->
-    <div id="results" class="screen">
+    <!-- RESULTS SCREEN -->
+    <main id="results" class="screen">
       <div class="results-card">
-        <div class="score-circle" id="score-circle" style="--score-deg: 0deg">
-          <div class="score-inner">
-            <div class="score-value" id="score-percent">0%</div>
-            <div class="score-label">Score</div>
+        <div class="score-circle-wrapper">
+          <div class="score-circle" id="score-circle" style="--score-deg: 0deg">
+            <div class="score-inner">
+              <span class="score-value" id="score-percent">0%</span>
+              <span class="score-label">Score</span>
+            </div>
           </div>
         </div>
+
         <h2 class="results-title" id="results-title">Great job!</h2>
-        <p class="results-sub" id="results-sub">You scored X out of Y</p>
+        <p class="results-sub" id="results-sub">You scored 0 out of 0</p>
+
         <div class="stats-row">
-          <div class="stat correct">
+          <div class="stat stat-correct">
             <div class="stat-value" id="stat-correct">0</div>
             <div class="stat-label">Correct</div>
           </div>
-          <div class="stat wrong">
+          <div class="stat stat-wrong">
             <div class="stat-value" id="stat-wrong">0</div>
             <div class="stat-label">Wrong</div>
           </div>
-          <div class="stat">
+          <div class="stat stat-time">
             <div class="stat-value" id="stat-time">0s</div>
-            <div class="stat-label">Time</div>
+            <div class="stat-label">Time Taken</div>
           </div>
         </div>
+
         <div class="results-actions">
-          <button class="btn btn-ghost" id="btn-review">Review Answers</button>
+          <button class="btn btn-secondary" id="btn-review">Review Answers</button>
           <button class="btn btn-primary" id="btn-retry">Try Again</button>
-          <button class="btn btn-accent" id="btn-home">All Subjects</button>
+          <button class="btn btn-ghost" id="btn-home">All Subjects</button>
         </div>
+
         <div class="review-section" id="review-section" style="display:none">
-          <h3>Answer Review</h3>
-          <div id="review-list"></div>
+          <h3>Detailed Review</h3>
+          <div id="review-list" class="review-list"></div>
         </div>
       </div>
-    </div>
+    </main>
 
-    <footer>Ats Quiz 2026</footer>
+    <footer>© 2026 Ats Quiz Platform. All rights reserved.</footer>
   </div>
 
- <script src="index.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>
