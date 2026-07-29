@@ -38,6 +38,12 @@ function showScreen(screenName) {
   screens[screenName].classList.add('active');
 }
 
+function decodeHtmlEntities(text) {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 // Event Listeners for Subject Selection
 document.querySelectorAll('.subject-card').forEach(card => {
   card.addEventListener('click', () => {
@@ -46,29 +52,80 @@ document.querySelectorAll('.subject-card').forEach(card => {
   });
 });
 
-function startQuiz(subject) {
+async function startQuiz(subject) {
   currentSubject = subject;
-  currentQuestions = questionsDB[subject] || [];
   currentQuestionIndex = 0;
   score = 0;
   userAnswers = [];
   timeTaken = 0;
 
+  const fallbackQuestions = questionsDB[subject] || questionsDB.computer || [];
+  currentQuestions = fallbackQuestions;
+
   document.getElementById('quiz-subject').innerText = subject.toUpperCase();
   document.getElementById('q-total').innerText = currentQuestions.length;
-  
+  document.getElementById('q-current').innerText = 1;
+  document.getElementById('q-label').innerText = 'Loading question...';
+  document.getElementById('question-text').innerText = 'Loading question...';
+  document.getElementById('options').innerHTML = '';
+  document.getElementById('btn-next').disabled = true;
+
   showScreen('quiz');
   startTimer();
+  loadQuestion();
+
+  try {
+    const categoryIds = { computer: 18, math: 19, physics: 17, chemistry: 17 };
+    const catId = categoryIds[subject] || 18;
+    const url = `https://opentdb.com/api.php?amount=10&category=${catId}&type=multiple`;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (!data || !Array.isArray(data.results) || data.results.length === 0) {
+      throw new Error('No questions were returned by the API');
+    }
+
+    currentQuestions = data.results.map(item => {
+      const options = item.incorrect_answers.map(answer => decodeHtmlEntities(answer));
+      const correctIdx = Math.floor(Math.random() * 4);
+      const correctAnswer = decodeHtmlEntities(item.correct_answer);
+      options.splice(correctIdx, 0, correctAnswer);
+
+      return {
+        q: decodeHtmlEntities(item.question),
+        options,
+        correct: correctIdx
+      };
+    });
+  } catch (error) {
+    console.warn('Using local quiz questions instead:', error);
+    currentQuestions = fallbackQuestions;
+  }
+
+  document.getElementById('q-total').innerText = currentQuestions.length;
   loadQuestion();
 }
 
 function loadQuestion() {
   const qData = currentQuestions[currentQuestionIndex];
+  if (!qData) {
+    document.getElementById('q-current').innerText = 0;
+    document.getElementById('q-label').innerText = 'No questions';
+    document.getElementById('question-text').innerText = 'No questions available right now.';
+    document.getElementById('options').innerHTML = '';
+    document.getElementById('btn-next').disabled = true;
+    return;
+  }
+
   document.getElementById('q-current').innerText = currentQuestionIndex + 1;
   document.getElementById('q-label').innerText = `Question ${currentQuestionIndex + 1}`;
   document.getElementById('question-text').innerText = qData.q;
 
-  const progressPct = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+  const progressPct = currentQuestions.length ? ((currentQuestionIndex + 1) / currentQuestions.length) * 100 : 0;
   document.getElementById('progress-fill').style.width = `${progressPct}%`;
 
   const optionsContainer = document.getElementById('options');
@@ -94,8 +151,14 @@ function selectOption(index) {
 }
 
 document.getElementById('btn-next').addEventListener('click', () => {
+  const currentQuestion = currentQuestions[currentQuestionIndex];
+  if (!currentQuestion) {
+    finishQuiz();
+    return;
+  }
+
   const selected = userAnswers[currentQuestionIndex];
-  if (selected === currentQuestions[currentQuestionIndex].correct) {
+  if (selected === currentQuestion.correct) {
     score++;
   }
 
@@ -141,3 +204,10 @@ function finishQuiz() {
 document.getElementById('btn-quit').addEventListener('click', () => showScreen('home'));
 document.getElementById('btn-home').addEventListener('click', () => showScreen('home'));
 document.getElementById('btn-retry').addEventListener('click', () => startQuiz(currentSubject));
+
+
+
+
+
+
+
